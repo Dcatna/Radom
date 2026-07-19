@@ -1,27 +1,13 @@
-#include <iostream>
+#include "gui/main_window.h"
 
-#include "radar/radar.h"
+#include <QApplication>
 
 int main(int argc, char* argv[])
 {
+    QApplication application(argc, argv);
 
-    if (argc < 2) {
-        std::cerr << "Usage: ./Radom <config-file>\n";
-        return 1;
-    }
+    MainWindow window;
+    window.show();
 
-    std::cout << "Radom starting...\n";
-
-    const std::string configPath = argv[1];
-
-    Radar radar;
-
-    radar.initialize(configPath);
-
-    radar.printHello();
-    // radar.loadConfig(configPath);
-
-    radar.run_simulation();
-
-    return 0;
+    return application.exec();
 }
