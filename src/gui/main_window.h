@@ -18,6 +18,8 @@ class QValueAxis;
 
 class SpectrumWorker;
 
+class WaterfallWidget;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -45,7 +47,8 @@ private slots:
 private:
     QtCharts::QLineSeries* spectrumSeries_{nullptr};
     //QtCharts::QLineSeries* expectedToneSeries_{nullptr};
-
+    WaterfallWidget* waterfallWidget_{nullptr};
+    
     QtCharts::QChart* chart_{nullptr};
     QtCharts::QChartView* chartView_{nullptr};
 

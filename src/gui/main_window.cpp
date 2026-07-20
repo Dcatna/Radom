@@ -2,6 +2,7 @@
 
 #include "radio_settings.h"
 #include "spectrum_worker.h"
+#include "waterfall_widget.h"
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -108,6 +109,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     );
 
     chart_->addSeries(spectrumSeries_);
+
+    waterfallWidget_ = new WaterfallWidget(this);
+
+    waterfallWidget_->setPowerRange(
+        -120.0,
+        -60.0
+    );
 
     frequencyAxis_ = new QValueAxis(this);
     frequencyAxis_->setTitleText(
@@ -227,7 +235,21 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
         4
     );
 
-    mainLayout->setRowStretch(1, 1);
+    mainLayout->addWidget(
+        waterfallWidget_,
+        3,
+        0,
+        1,
+        5
+    );
+
+
+    mainLayout->setRowStretch(1, 2);  // spectrum
+    mainLayout->setRowStretch(2, 0);  // status labels
+    mainLayout->setRowStretch(3, 1);  // waterfall
+
+    mainLayout->setVerticalSpacing(6);
+    mainLayout->setContentsMargins(6, 6, 6, 6);
 
     // Signal Connections
     connect(
@@ -306,6 +328,8 @@ void MainWindow::startStreaming()
 
     const double toneKhz =
         settings.toneFrequencyHz / 1e3;
+
+    waterfallWidget_->clear();
 
     /*
      * Create a fresh worker and thread each time Start is
@@ -495,6 +519,28 @@ void MainWindow::updateSpectrum(
     }
 
     spectrumSeries_->replace(points);
+
+    const QRectF plotArea = chart_->plotArea();
+
+    const int leftMargin = static_cast<int>(
+        std::round(plotArea.left())
+    );
+
+    const int rightMargin = static_cast<int>(
+        std::round(
+            chartView_->width() -
+            plotArea.right()
+        )
+    );
+
+    waterfallWidget_->setHorizontalMargins(
+        leftMargin,
+        rightMargin
+    );
+
+    waterfallWidget_->addSpectrum(
+        magnitudeDbfs
+    );
 
     const double peakAboveNoise =
         peakLevelDbfs - noiseFloorDbfs;

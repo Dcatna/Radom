@@ -54,6 +54,8 @@ add_executable(
     src/gui/main_window.h
     src/gui/spectrum_worker.cpp
     src/gui/spectrum_worker.h
+    src/gui/waterfall_widget.cpp
+    src/gui/waterfall_widget.h
 )
 
 target_include_directories(
