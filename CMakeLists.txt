@@ -47,6 +47,7 @@ add_executable(
     src/radio/radio_controller.cpp
 
     src/waveform/tone_generator.cpp
+    src/waveform/chirp_generator.cpp
 
     src/dsp/spectrum_processor.cpp
 

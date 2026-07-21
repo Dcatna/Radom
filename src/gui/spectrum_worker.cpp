@@ -3,6 +3,7 @@
 #include "dsp/spectrum_processor.h"
 #include "radio/radio_controller.h"
 #include "waveform/tone_generator.h"
+#include "waveform/chirp_generator.h"
 
 #include <QElapsedTimer>
 #include <QThread>
@@ -52,14 +53,17 @@ void SpectrumWorker::run()
     {
         emit statusChanged("Opening LimeSDR...");
 
-        ToneGenerator toneGenerator(
+        ChirpGenerator chirpGenerator(
             sampleRateHz,
-            toneFrequencyHz,
-            settings_.txAmplitude
+            -800e3,
+            +800e3,
+            50e-3,
+            0.10F,
+            5
         );
 
-        const std::vector<std::complex<float>> txSamples =
-            toneGenerator.generate(txBufferSize);
+        const auto txSamples =
+            chirpGenerator.generate();
 
         RadioConfig radioConfig;
         radioConfig.sampleRateHz = sampleRateHz;
