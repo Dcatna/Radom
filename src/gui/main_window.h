@@ -7,6 +7,7 @@ class QPushButton;
 class QCloseEvent;
 class QDoubleSpinBox;
 class QThread;
+class QComboBox;
 
 namespace QtCharts
 {
@@ -14,6 +15,7 @@ class QLineSeries;
 class QChart;
 class QChartView;
 class QValueAxis;
+
 }
 
 class SpectrumWorker;
@@ -65,6 +67,7 @@ private:
     QDoubleSpinBox* toneFrequencyInput_{nullptr};
     QDoubleSpinBox* txGainInput_{nullptr};
     QDoubleSpinBox* rxGainInput_{nullptr};
+    QComboBox* waveformInput_{nullptr};
 
     QPushButton* startButton_{nullptr};
     QPushButton* stopButton_{nullptr};

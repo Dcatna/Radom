@@ -10,4 +10,6 @@ struct RadioSettings
     double rxGainDb{30.0};
 
     float txAmplitude{0.10F};
+
+    int mode{0};
 };

@@ -8,6 +8,7 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
+#include <QComboBox>
 
 #include <QCloseEvent>
 #include <QDoubleSpinBox>
@@ -70,6 +71,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     startButton_ = new QPushButton("Start", this);
     stopButton_ = new QPushButton("Stop", this);
 
+    waveformInput_ = new QComboBox(this);
+
+    waveformInput_->addItem("Tone");
+    waveformInput_->addItem("Continuous chirp");
+    waveformInput_->addItem("Pulsed chirp");
+
+    
+
     stopButton_->setEnabled(false);
 
     auto* controlsLayout = new QHBoxLayout();
@@ -94,10 +103,15 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     controlsLayout->addWidget(new QLabel("RX gain:", this));
     controlsLayout->addWidget(rxGainInput_);
 
+    controlsLayout->addSpacing(12);
+    controlsLayout->addWidget(new QLabel("Waveform: ", this));
+    controlsLayout->addWidget(waveformInput_);
+
     controlsLayout->addStretch();
 
     controlsLayout->addWidget(startButton_);
     controlsLayout->addWidget(stopButton_);
+    
 
     // Spectrum Chart
     spectrumSeries_ = new QLineSeries(this);
@@ -306,6 +320,16 @@ void MainWindow::startStreaming()
 
     settings.rxGainDb =
         rxGainInput_->value();
+
+
+    const QString waveform = waveformInput_->currentText();
+    if (waveform == "Pulsed chirp") {
+        settings.mode = 0;
+    } else if (waveform == "Tone") {
+        settings.mode = 1;
+    } else {
+        settings.mode = 2;
+    }
 
     /*
      * The tone frequency must remain within the sample-rate

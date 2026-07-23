@@ -38,6 +38,8 @@ void SpectrumWorker::run()
 
     const double toneFrequencyHz =
         settings_.toneFrequencyHz;
+    
+    int mode = settings_.mode;
 
     constexpr std::size_t txBufferSize = 10000;
     constexpr std::size_t fftSize = 16384;
@@ -49,21 +51,31 @@ void SpectrumWorker::run()
     // Higher values produce a smoother display.
     constexpr double averagingFactor = 0.75;
 
+    std::vector<std::complex<float>> txSamples;
     try
     {
         emit statusChanged("Opening LimeSDR...");
+        if (mode == 0) {
+            ChirpGenerator chirpGenerator(
+                sampleRateHz,
+                -800e3,
+                +800e3,
+                50e-3,
+                0.10F,
+                5
+            );
 
-        ChirpGenerator chirpGenerator(
-            sampleRateHz,
-            -800e3,
-            +800e3,
-            50e-3,
-            0.10F,
-            5
-        );
+            txSamples = chirpGenerator.generate();
+        } else {
+            ToneGenerator toneGenerator(
+                sampleRateHz,
+                toneFrequencyHz,
+                settings_.txAmplitude
+            );
 
-        const auto txSamples =
-            chirpGenerator.generate();
+            txSamples = toneGenerator.generate(txBufferSize);
+        }
+
 
         RadioConfig radioConfig;
         radioConfig.sampleRateHz = sampleRateHz;
